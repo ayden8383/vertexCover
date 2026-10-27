@@ -1,0 +1,36 @@
+# Visual Studio local data
+.vs/
+*.VC.db
+*.VC.opendb
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Generated CMake / Ninja / MSBuild output
+out/
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+Testing/
+*.obj
+*.o
+*.exe
+*.pdb
+*.ilk
+*.idb
+*.tlog
+x64/
+Debug/
+Release/
+
+# Generated experiment output (keep small manually curated results only if needed)
+results/*.csv
+results/*.log
+!results/.gitkeep
+
+# Temporary files
+*.tmp
+*.bak
+.DS_Store
