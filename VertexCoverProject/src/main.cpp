@@ -5,7 +5,7 @@
 #include <iostream>
 
 int main() {
-    // A six-vertex path, using the same family as Section 3.1.2.
+    // A six-vertex path, using the same family 
     const vc::Graph graph = vc::makePathGraph(6);
     const vc::ApproximationResult result = vc::solveApproximation(graph);
     const int optimum = vc::bruteForceMinimumCoverSize(graph);
