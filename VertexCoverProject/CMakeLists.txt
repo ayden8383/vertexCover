@@ -24,7 +24,10 @@ else()
 endif()
 
 # Main demonstration program
-add_executable(vertex_cover_demo src/main.cpp)
+add_executable(
+    vertex_cover_demo
+    src/main.cpp
+)
 
 target_link_libraries(
     vertex_cover_demo
@@ -32,7 +35,10 @@ target_link_libraries(
 )
 
 # Correctness tests
-add_executable(vertex_cover_tests tests/SmokeTests.cpp)
+add_executable(
+    vertex_cover_tests
+    tests/SmokeTests.cpp
+)
 
 target_link_libraries(
     vertex_cover_tests
@@ -50,7 +56,18 @@ target_link_libraries(
     PRIVATE vertex_cover_lib
 )
 
-# Enable automated tests
+# Runtime benchmarking
+add_executable(
+    vertex_cover_benchmark
+    tests/Benchmark.cpp
+)
+
+target_link_libraries(
+    vertex_cover_benchmark
+    PRIVATE vertex_cover_lib
+)
+
+# Enable automated correctness tests
 enable_testing()
 
 add_test(

@@ -24,4 +24,4 @@ ApproximationResult solveApproximation(const Graph& graph) {
     return result;
 }
 
-} // namespace vc
+} 
