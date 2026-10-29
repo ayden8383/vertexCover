@@ -1,6 +1,7 @@
 #include "vertex_cover/Approximation.hpp"
 #include "vertex_cover/Generators.hpp"
 #include "vertex_cover/Verification.hpp"
+#include "vertex_cover/BranchAndBound.hpp"
 
 #include <algorithm>
 #include <iomanip>
@@ -11,13 +12,14 @@
 #include <string>
 #include <vector>
 
-// Run the approximation algorithm with a specified edge order.
+// Run both algorithms with a specified edge order.
 void runOrder(
     const vc::Graph& original,
     const std::vector<vc::Edge>& orderedEdges,
     const std::string& label,
     int optimum,
-    std::set<int>& observedSizes
+    std::set<int>& observedSizes,
+    std::set<int>& observedExactSizes
 ) {
     // Rebuild the same graph using a different edge order.
     vc::Graph reordered(original.vertexCount());
@@ -44,12 +46,25 @@ void runOrder(
         );
     }
 
-    // Record the observed cover size.
+    // Run the exact branch-and-bound algorithm on the same order.
+    const auto exact = vc::solveBranchAndBound(reordered);
+
+    const int exactSize = static_cast<int>(exact.cover.size());
+
+    // The exact cover must be valid and optimal for every edge order.
+    if (!vc::isVertexCover(reordered, exact.cover) ||
+        !exact.optimal || exactSize != optimum) {
+        throw std::runtime_error(
+            "Invalid exact result: " + label
+        );
+    }
     observedSizes.insert(coverSize);
+    observedExactSizes.insert(exactSize);
 
     // Display the result.
     std::cout << std::left << std::setw(18) << label
         << std::right << std::setw(8) << coverSize
+        << std::setw(8) << exactSize
         << std::setw(8) << optimum
         << std::setw(10) << std::fixed
         << std::setprecision(2)
@@ -66,12 +81,13 @@ int main() {
         // Print column headers.
         std::cout << std::left << std::setw(18) << "Edge order"
             << std::right << std::setw(8) << "Cover"
+            << std::setw(8) << "Exact"  
             << std::setw(8) << "OPT"
             << std::setw(10) << "Ratio"
             << std::setw(9) << "Valid"
             << '\n';
 
-        std::cout << std::string(53, '-') << '\n';
+        std::cout << std::string(61, '-') << '\n';
 
         // ---------------------------------------------
         // EXPERIMENT 1: Path graph with four vertices.
@@ -83,6 +99,7 @@ int main() {
             vc::bruteForceMinimumCoverSize(small);
 
         std::set<int> smallSizes;
+        std::set<int> smallExactSizes;
 
         std::cout << "\nPath P4:\n";
 
@@ -92,7 +109,8 @@ int main() {
             { {1, 2}, {0, 1}, {2, 3} },
             "Middle first",
             smallOpt,
-            smallSizes
+            smallSizes,
+            smallExactSizes
         );
 
         // Process the outer edges first.
@@ -101,7 +119,8 @@ int main() {
             { {0, 1}, {2, 3}, {1, 2} },
             "Outer first",
             smallOpt,
-            smallSizes
+            smallSizes,
+            smallExactSizes
         );
 
         // ---------------------------------------------
@@ -116,6 +135,7 @@ int main() {
         const auto edges = graph.edges();
 
         std::set<int> observedSizes;
+        std::set<int> observedExactSizes;
 
         std::cout << "\nPath P10:\n";
 
@@ -125,7 +145,8 @@ int main() {
             edges,
             "Original",
             optimum,
-            observedSizes
+            observedSizes,
+            observedExactSizes
         );
 
         // Repeat with ten seeded edge permutations.
@@ -144,13 +165,14 @@ int main() {
                 rng
             );
 
-            // Run the approximation algorithm.
+            // Run both algorithms.
             runOrder(
                 graph,
                 shuffled,
                 "Seed " + std::to_string(seed),
                 optimum,
-                observedSizes
+                observedSizes,
+                observedExactSizes
             );
         }
 
@@ -161,6 +183,12 @@ int main() {
         std::cout << "\nObserved P10 cover sizes: ";
 
         for (int size : observedSizes) {
+            std::cout << size << ' ';
+        }
+
+        std::cout << "\nObserved P10 exact sizes: ";
+
+        for (int size : observedExactSizes) {
             std::cout << size << ' ';
         }
 

@@ -1,6 +1,7 @@
 #include "vertex_cover/Approximation.hpp"
 #include "vertex_cover/Generators.hpp"
 #include "vertex_cover/Verification.hpp"
+#include "vertex_cover/BranchAndBound.hpp"
 
 #include <cstdint>
 #include <iomanip>
@@ -23,19 +24,20 @@ namespace {
     // Print the table heading.
     void printHeader() {
         std::cout << "\n";
-        std::cout << "MINIMUM VERTEX COVER - 2-APPROXIMATION TESTS\n";
+        std::cout << "MINIMUM VERTEX COVER - 2-APPROXIMATION AND EXACT TESTS\n";
         std::cout << "============================================\n\n";
 
         std::cout << std::left << std::setw(23) << "Graph"
             << std::right << std::setw(5) << "n"
             << std::setw(6) << "m"
             << std::setw(9) << "Cover"
+            << std::setw(7) << "Exact"
             << std::setw(7) << "OPT"
             << std::setw(9) << "Ratio"
             << std::setw(10) << "Result"
             << '\n';
 
-        std::cout << std::string(69, '-') << '\n';
+        std::cout << std::string(76, '-') << '\n';
     }
 
     // Calculate the approximation ratio.
@@ -102,6 +104,30 @@ namespace {
             );
         }
 
+        // Run the exact branch-and-bound algorithm.
+        const vc::ExactResult exact =
+            vc::solveBranchAndBound(graph);
+
+        const int exactSize =
+            static_cast<int>(exact.cover.size());
+
+        // Test 6: The exact cover must also cover every edge.
+        require(
+            vc::isVertexCover(graph, exact.cover),
+            label + ": Invalid exact vertex cover"
+        );
+
+        // Test 7: No time limit is set, so the search must finish.
+        require(
+            exact.optimal,
+            label + ": Exact search did not finish"
+        );
+
+        // Test 8: The exact cover size must equal OPT.
+        require(
+            exactSize == optimum,
+            label + ": Exact cover size differs from OPT"
+        );
         // The graph passed all correctness checks.
         ++passed;
 
@@ -110,6 +136,7 @@ namespace {
             << std::right << std::setw(5) << graph.vertexCount()
             << std::setw(6) << graph.edges().size()
             << std::setw(9) << coverSize
+            << std::setw(7) << exactSize
             << std::setw(7) << optimum
             << std::setw(9) << formatRatio(coverSize, optimum)
             << std::setw(10) << "PASS"

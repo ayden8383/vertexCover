@@ -34,6 +34,16 @@ target_link_libraries(
     PRIVATE vertex_cover_lib
 )
 
+# Exact branch-and-bound runtime benchmarking
+add_executable(
+    vertex_cover_exact_benchmark
+    tests/ExactBenchmark.cpp
+)
+
+target_link_libraries(
+    vertex_cover_exact_benchmark
+    PRIVATE vertex_cover_lib
+)
 # Correctness tests
 add_executable(
     vertex_cover_tests
