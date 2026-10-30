@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Ayden\Documents\vertexCover\VertexCoverProject\build-ablation\CMakeFiles\dff54702ee58b0ac60ddfca173a1a010\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{5505DFC5-4047-3929-AED0-A5FE08C214BE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

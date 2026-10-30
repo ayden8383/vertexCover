@@ -84,3 +84,6 @@ add_test(
     NAME VertexCoverSmokeTests
     COMMAND vertex_cover_tests
 )
+
+add_executable(ablation_cli src/ablation_cli.cpp)
+target_link_libraries(ablation_cli PRIVATE vertex_cover_lib)
